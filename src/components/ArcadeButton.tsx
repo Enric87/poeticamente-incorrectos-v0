@@ -1,5 +1,31 @@
 import type { ReactNode } from "react";
 
+function playArcadeSound(variant: "primary" | "secondary") {
+  const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  if (variant === "primary") {
+    osc.type = "square";
+    osc.frequency.setValueAtTime(220, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.2);
+  } else {
+    osc.type = "square";
+    osc.frequency.setValueAtTime(440, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.04);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.1);
+  }
+}
+
 interface ArcadeButtonProps {
   children: ReactNode;
   onClick?: () => void;
@@ -29,9 +55,14 @@ export function ArcadeButton({
 
   const disabledStyles = "opacity-40 cursor-not-allowed pointer-events-none";
 
+  const handleClick = () => {
+    playArcadeSound(variant);
+    onClick?.();
+  };
+
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       disabled={disabled}
       className={`${base} ${variant === "primary" ? primary : secondary} ${
         disabled ? disabledStyles : "cursor-pointer"
