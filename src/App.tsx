@@ -7,7 +7,7 @@ import { CharacterSelect } from "./components/CharacterSelect";
 type Screen = "start" | "select" | "intro" | "level";
 
 // Pantallas donde suena la música
-const MUSIC_SCREENS: Screen[] = ["start", "select", "intro"];
+const MUSIC_SCREENS: Screen[] = ["start", "select", "intro", "level"];
 
 function App() {
   const [screen, setScreen] = useState<Screen>("start");
